@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "ctype.h": "c",
+        "stdint.h": "c",
+        "loadbmp.h": "c"
+    }
+}
