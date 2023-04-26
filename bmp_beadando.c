@@ -95,14 +95,47 @@ typedef struct
     int32_t x_resolution_ppm;  // Pixels per meter
     int32_t y_resolution_ppm;  // Pixels per meter
     uint32_t num_colors;       // Number of colors
-    uint32_t test;       // Number of colors
+    uint32_t test;             // Number of colors
     uint32_t color1;           // color 0
     uint32_t color2;           // color 1
 } BMPHeader;
 
 //3.feladat
-void BMPcreator(int *Values, int NumValues) {
-    unsigned int width = NumValues, height = 21;
+
+void BMPcreator(int *Values, int NumValues) { //NumValues = measurement_count = imagewidth
+    BMPHeader header = {
+        .type = 0x4d42,
+        .size = NumValues * 21 + sizeof(BMPHeader), 
+        .reserved1 = 0,
+        .reserved2 = 0,
+        .offset = sizeof(BMPHeader),
+        .dib_header_size = 40,
+        .width_px = NumValues,
+        .height_px = 21,
+        .num_planes = 1,
+        .bits_per_pixel = 1,
+        .compression = 0,
+        .image_size_bytes = 0,
+        .x_resolution_ppm = 0,
+        .y_resolution_ppm = 0,
+        .num_colors = 0,
+        .test = 0,
+        .color1 = 1,
+        .color2 = 0
+    };
+
+    //padding
+    uint8_t line_width = (NumValues / 8 / 4 + 1) * 4; //
+    
+
+    FILE* file = fopen("chart.bmp", "wb");
+    fwrite(&header, sizeof(BMPHeader), 1, file);
+
+    uint8_t *pixels = calloc(21 * line_width, 0);
+    fwrite(pixels, 21 * line_width, 1, file);
+   
+
+    /*unsigned int width = NumValues, height = 21; //21 meg van adva mint magassag
     printf("test");
 
     unsigned char *pixels = calloc(height * width * sizeof(unsigned char), 0);
@@ -113,7 +146,7 @@ void BMPcreator(int *Values, int NumValues) {
     printf("image written");
 
     if (err)
-        printf("LoadBMP Load Error: %u\n", err);
+        printf("LoadBMP Load Error: %u\n", err);*/
 }
 
 void kuldo_mod(bool file_mod)
