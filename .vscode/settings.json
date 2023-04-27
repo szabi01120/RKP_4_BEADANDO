@@ -4,5 +4,6 @@
         "ctype.h": "c",
         "stdint.h": "c",
         "loadbmp.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

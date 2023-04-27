@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
-#include <limits.h>
 #include <stdint.h>
+#include <dirent.h>
+#include <ctype.h>
 
 /*>>> --version PAR.ARG <<<*/
 #define VERSION "1.0"
@@ -24,6 +25,9 @@
 #define ARG_VERSION "--version"
 
 #define max(a, b) (((a) > (b)) ? (a) : (b))
+
+/*4.FELADAT*/
+#define MAX_BUF_SIZE 1024
 
 void help()
 {
@@ -109,6 +113,7 @@ void set_pixel(int x, int y, int value, uint32_t* pixels, int line_width)
 }
 
 void BMPcreator(int* Values, int NumValues) { //NumValues = measurement_count = imagewidth
+
   int line_width = NumValues / 32 + 1;
   int pixels_length = line_width * 21;
   uint32_t* pixels = calloc(pixels_length * sizeof(*pixels), 1);
@@ -147,6 +152,54 @@ void BMPcreator(int* Values, int NumValues) { //NumValues = measurement_count = 
   fclose(file);
 }
 
+//3.feladat END
+
+//4.FELADAT
+
+int FindPID() {
+  DIR *dirp;
+    struct dirent *dp;
+    FILE *fp;
+    char path[MAX_BUF_SIZE];
+    char line[MAX_BUF_SIZE];
+    int pid = -1;
+
+    dirp = opendir("/proc");
+    if (dirp == NULL) {
+        perror("Failed to open directory /proc");
+        return -1;
+    }
+
+    while ((dp = readdir(dirp)) != NULL) {
+        if (dp->d_type == DT_DIR && isdigit(dp->d_name[0])) {
+            snprintf(path, MAX_BUF_SIZE, "/proc/%s/status", dp->d_name);
+            fp = fopen(path, "r");
+            if (fp == NULL) {
+                continue;
+            }
+            while (fgets(line, MAX_BUF_SIZE, fp) != NULL) {
+                if (strncmp(line, "Name:\t", 6) == 0 && strstr(line, "chart") != NULL) {
+                    while (fgets(line, MAX_BUF_SIZE, fp) != NULL) {
+                        if (strncmp(line, "Pid:\t", 5) == 0) {
+                            pid = atoi(line + 5);
+                            printf("PID: %d\n", pid);
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+            fclose(fp);
+        }
+        if (pid != -1) {
+            break;
+        }
+    }
+
+    closedir(dirp);
+    return pid;
+}
+
 void kuldo_mod(bool file_mod)
 {
   printf("A program kuldo modban uzemel! A kommunikacio modja: %s\n", file_mod ? "file" : "socket");
@@ -154,19 +207,17 @@ void kuldo_mod(bool file_mod)
   int n = Measurement(&tomb);
   printf("n: %d\n", n);
   BMPcreator(tomb, 128);
+  printf("PID: %d\n", FindPID());
 }
 
-void fogado_mod(bool file_mod)
-{
+void fogado_mod(bool file_mod) {
   printf("A program fogado modban uzemel! A kommunikacio modja: %s\n", file_mod ? "file" : "socket");
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
   srand(time(NULL));
 
-  if (strstr(argv[0], "chart.exe") == 0)
-  {
+  if (strstr(argv[0], "chart.exe") == 0) {
     printf("Hibas fajlnev! A program leall!\n");
     exit(1);
   }
@@ -174,35 +225,27 @@ int main(int argc, char* argv[])
   bool fogado_mod_bool = true;
   bool file_mod_bool = true;
 
-  if (argc == 1)
-  {
+  if (argc == 1) {
     help();
   }
-  else
-  {
-    for (int i = 1; i < argc; i++)
-    {
-      if (strstr(argv[i], ARG_SEND))
-      {
+  else {
+    for (int i = 1; i < argc; i++) {
+      if (strstr(argv[i], ARG_SEND)) {
         fogado_mod_bool = false;
       }
-      else if (strstr(argv[i], ARG_SOCKET))
-      {
+      else if (strstr(argv[i], ARG_SOCKET)) {
         file_mod_bool = false;
       }
-      else if (!strstr(argv[i], ARG_RECEIVE) && !strstr(argv[1], ARG_FILE))
-      {
+      else if (!strstr(argv[i], ARG_RECEIVE) && !strstr(argv[1], ARG_FILE)) {
         printf("Ismeretlen kapcsolo: \'%s\'\n", argv[i]);
       }
     }
   }
 
-  if (fogado_mod_bool)
-  {
+  if (fogado_mod_bool) {
     fogado_mod(file_mod_bool);
   }
-  else
-  {
+  else {
     kuldo_mod(file_mod_bool);
   }
 }
