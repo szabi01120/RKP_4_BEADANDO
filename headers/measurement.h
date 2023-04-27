@@ -1,7 +1,7 @@
 #pragma once
 #include "macros.h"
 
-int Measurement(int** Values) //Forras: Varga Imre oldala
+int Measurement(int** Values) //Forras: Varga Imre oldala (idő kezelés)
 {
   time_t now;
   struct tm* local_now;
@@ -13,22 +13,18 @@ int Measurement(int** Values) //Forras: Varga Imre oldala
   measurement_count = max(measurement_count, 100);
 
   *Values = malloc(sizeof(**Values) * measurement_count); // dinamikus tomb letrehozasa
-  int* array = *Values;
-  array[0] = 0;
+  int* array = *Values; //dinamikus tombre mutato pointer
+  array[0] = 0; //az elso ertek 0
 
-  for (int i = 1; i < measurement_count; i++)
-  {
+  for (int i = 1; i < measurement_count; i++) {
     float random_number = rand() / (float)RAND_MAX;
-    if (random_number < 0.428571f) //42.8571% esely ekkor + 1
-    {
+    if (random_number < 0.428571f) { //42.8571% esely ekkor + 1
       array[i] = array[i - 1] + 1;
     }
-    else if (random_number < 0.428571f + 11.0f / 31.0f) // 11/31 esely ekkor - 1
-    {
+    else if (random_number < 0.428571f + 11.0f / 31.0f) { // 11/31 esely ekkor - 1 
       array[i] = array[i - 1] - 1;
     }
-    else
-    {
+    else {
       array[i] = array[i - 1];
     }
   }

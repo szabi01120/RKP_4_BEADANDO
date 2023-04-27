@@ -3,7 +3,8 @@
         "*.embeddedhtml": "html",
         "ctype.h": "c",
         "stdint.h": "c",
-        "loadbmp.h": "c"
+        "loadbmp.h": "c",
+        "receiver.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

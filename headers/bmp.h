@@ -7,8 +7,9 @@
 
 #include "macros.h"
 
-#define BMP_MAGIC 0x4d42
+#define BMP_MAGIC 0x4d42 //magic number bmp header
 
+//BMP header struktúra
 typedef struct
 {
   uint32_t size;             // File size in bytes
@@ -30,11 +31,13 @@ typedef struct
 } BMPHeader;
 
 void BMPcreator(int* Values, int NumValues) {
-  uint32_t cols = (((NumValues + 31) & ~31) >> 3);
-  uint8_t rows = NumValues;
-  uint32_t data_size = rows * cols * sizeof(uint8_t);
-  uint8_t* data = calloc(data_size, sizeof(*data));
-  BMPHeader header = {
+  uint32_t cols = (((NumValues + 31) & ~31) >> 3); //oszlopok száma
+  uint32_t rows = NumValues;                       //sorok száma
+  uint32_t data_size = rows * cols * sizeof(uint8_t); //méret
+
+  uint8_t* data = calloc(data_size, sizeof(*data));  //memória lefoglalása
+
+  BMPHeader header = { //header inicializálása
           .size = 2 + sizeof(header) + data_size,
           .reserved = 0,
           .offset = 2 + sizeof(header),
@@ -53,23 +56,24 @@ void BMPcreator(int* Values, int NumValues) {
           .color2 = 0x0 
   };
 
-  for (int i = 0; i < NumValues; i++) {
-    uint32_t target_row = min(max(Values[i] + NumValues / 2, 0), NumValues - 1);
-    bitset(data[cols * target_row + i / 8], 7 - (i % 8) );
+  for (int i = 0; i < NumValues; i++) { 
+    uint32_t target_row = min(max(Values[i] + NumValues / 2, 0), NumValues - 1); 
+    bitset(data[cols * target_row + i / 8], 7 - (i % 8) ); 
   }
 
   char path[100] = "\0";
   getcwd(path, 100);
-  strcat(path, "/chart.bmp");
+  strcat(path, "/chart.bmp"); //fájl elérési útja
 
-  FILE* image = fopen(path, "w");
+  FILE* image = fopen(path, "w"); //fájl megnyitása
 
   uint16_t magic = BMP_MAGIC;
-  fwrite(&magic, sizeof(magic), 1, image);
-  fwrite(&header, sizeof(header), 1, image);
-  fwrite(data, data_size, 1, image);
-  fclose(image);
-
-  chmod(path, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
+  fwrite(&magic, sizeof(magic), 1, image); //magic number fwrite
+  fwrite(&header, sizeof(header), 1, image); //header fwrite
+  fwrite(data, data_size, 1, image); //data fwrite
+  free(data); //felszabadítás
+  fclose(image); //fájl bezárása
+  
+  chmod(path, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); //minden felh olvashassa, de csak a tulajdonos tud írni bele
 }
 

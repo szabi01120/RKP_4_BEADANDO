@@ -1,5 +1,6 @@
 #pragma once
 #include <stdbool.h>
+#include <signal.h>
 
 #include "home.h"
 #include "array.h"
@@ -30,10 +31,17 @@ void ReceiveViaFile(int sig) {
 void receiver_mode(bool file_mode) {
 	printf("A program fogado modban fut\n");
 
-	ReceiveViaFile(0);
-	printf("A chart.bmp elkeszult\n");
+	sigset_t signal_set;
 
-	int pid = FindPID();
-	printf("PID megtalálva: %d\n", pid);
+	sigemptyset(&signal_set);
+	sigaddset(&signal_set, SIGUSR1);
 
+	int sig;
+
+	if (file_mode) {
+		while(1) {
+			sigwait(&signal_set, &sig);
+			ReceiveViaFile(sig);
+		}
+	}
 }

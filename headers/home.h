@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 
+// Home directory-t adja vissza
 char* getHomeDir() {
   char* homeDir = getenv("HOME");
   if (!homeDir) {

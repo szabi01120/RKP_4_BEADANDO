@@ -5,6 +5,7 @@
 #include "pid.h"
 #include "home.h"
 #include "measurement.h"
+#include "receiver.h"
 
 void SendViaFile(int* Values, int NumValues) {
 	printf("A program kuldo modban fut\n");
@@ -30,4 +31,5 @@ void sender_mode(bool file_mode) {
 	if (file_mode) {
 		SendViaFile(values, num_values);
 	}
+	free(values);	
 }
