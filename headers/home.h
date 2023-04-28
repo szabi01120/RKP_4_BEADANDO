@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 
-// Home directory-t adja vissza
+// Home directory-t adja vissza ide írja a measurement.txt-t
 char* getHomeDir() {
   char* homeDir = getenv("HOME");
   if (!homeDir) {

@@ -16,6 +16,8 @@ int main(int argc, char** argv) {
   srand(time(NULL));
 
   Arguments args = process_arguments(argc, argv);
+
+
   if (args.receiver_mode) {
     receiver_mode(args.file_mode);
   }

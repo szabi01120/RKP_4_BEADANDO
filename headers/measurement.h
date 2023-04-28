@@ -10,7 +10,7 @@ int Measurement(int** Values) //Forras: Varga Imre oldala (idő kezelés)
   int seconds_now = (*local_now).tm_sec; //jelenlegi masodperc
   int minutes_now = (*local_now).tm_min; //jelenlegi perc
   int measurement_count = minutes_now % 15 * 60 + seconds_now; //utolo negyed ora ota eltelt masodpercek szama
-  measurement_count = max(measurement_count, 100);
+  measurement_count = 10;// max(measurement_count, 100);
 
   *Values = malloc(sizeof(**Values) * measurement_count); // dinamikus tomb letrehozasa
   int* array = *Values; //dinamikus tombre mutato pointer

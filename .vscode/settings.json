@@ -4,7 +4,12 @@
         "ctype.h": "c",
         "stdint.h": "c",
         "loadbmp.h": "c",
-        "receiver.h": "c"
+        "receiver.h": "c",
+        "pwd.h": "c",
+        "sender.h": "c",
+        "args.h": "c",
+        "measurement.h": "c",
+        "stdio.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
